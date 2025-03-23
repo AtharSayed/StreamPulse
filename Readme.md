@@ -43,12 +43,12 @@ kafka-topics.bat --create --topic ecom-transactions --bootstrap-server localhost
 
 ### 4. Start the Kafka Producer (Simulating Transactions)
 ```sh
-python producer.py
+ python .\producer.py --topic ecom-transactions --bootstrap-server localhost:9092  
 ```
 
 ### 5. Start the Spark Streaming Consumer
 ```sh
-python consumer.py
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.4 E:\DataProcessingProject\spark\consumer.py
 ```
 
 ### 6. Run the Streamlit Dashboard
