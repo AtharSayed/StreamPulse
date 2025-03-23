@@ -28,12 +28,12 @@ pip install -r requirements.txt
 
 #### a. Start Zookeeper
 ```sh
-zookeeper-server-start.bat config/zookeeper.properties
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
 ```
 
 #### b. Start Kafka Server
 ```sh
-kafka-server-start.bat config/server.properties
+.\bin\windows\kafka-server-start.bat .\config\server.properties
 ```
 
 ### 3. Create Kafka Topic
