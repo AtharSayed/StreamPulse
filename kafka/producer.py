@@ -6,11 +6,11 @@ import time
 # Kafka Configuration
 conf = {'bootstrap.servers': 'localhost:9092'}
 producer = Producer(conf)
-topic = "ecom-transactions"
+topic = "ecom-transactions"  # ✅ Ensure topic name is consistent across all scripts
 
-# Load CSV Data with Encoding Fix and Header Handling
+# Load CSV Data
 df = pd.read_csv(r"E:\DataProcessingProject\data\data.csv", encoding="ISO-8859-1", header=0)
-df.columns = df.columns.str.strip()  # Removes extra spaces in column names
+df.columns = df.columns.str.strip()  # Remove extra spaces in column names
 
 # Debugging: Print column names and sample data
 print("CSV Columns:", df.columns)
@@ -26,12 +26,14 @@ for index, row in df.iterrows():
         "StockCode": str(row["StockCode"]),
         "Description": str(row["Description"]),
         "Quantity": int(row["Quantity"]),
-        "InvoiceDate": row["InvoiceDate"],  # Already converted to string
+        "InvoiceDate": row["InvoiceDate"],
         "UnitPrice": float(row["UnitPrice"]),
         "CustomerID": str(row["CustomerID"]) if not pd.isna(row["CustomerID"]) else None,
         "Country": str(row["Country"])
     }
     producer.produce(topic, key=str(transaction["InvoiceNo"]), value=json.dumps(transaction))
-    producer.flush()
     print(f"Produced: {transaction}")
     time.sleep(0.5)  # Adjust speed as needed
+
+producer.flush()  # ✅ Flush only once at the end
+print("✅ Data production completed!")

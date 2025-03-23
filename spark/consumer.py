@@ -40,6 +40,7 @@ df_parsed = df.selectExpr("CAST(value AS STRING)") \
 query = df_parsed.writeStream \
     .outputMode("append") \
     .format("console") \
+    .trigger(processingTime="5 seconds") \
     .start()
 
 query.awaitTermination()
