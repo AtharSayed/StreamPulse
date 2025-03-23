@@ -13,6 +13,7 @@ This project implements a real-time dashboard for monitoring e-commerce transact
 - **Apache Spark** (for structured streaming)
 - **Streamlit** (for web-based visualization)
 - **Plotly** (for interactive charts)
+- **Pyspark** for Data handling and manipulations
 - **Python** (for scripting and processing)
 
 ## Setup and Installation
