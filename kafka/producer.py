@@ -1,5 +1,5 @@
 from confluent_kafka import Producer
-import pandas as pd
+from pyspark.sql import SparkSession
 import json
 import time
 
@@ -8,28 +8,27 @@ conf = {'bootstrap.servers': 'localhost:9092'}
 producer = Producer(conf)
 topic = "ecom-transactions"  # ✅ Ensure topic name is consistent across all scripts
 
-# Load CSV Data
-df = pd.read_csv(r"E:\DataProcessingProject\data\data.csv", encoding="ISO-8859-1", header=0)
-df.columns = df.columns.str.strip()  # Remove extra spaces in column names
+# Initialize Spark Session
+spark = SparkSession.builder.appName("EcommerceProducer").getOrCreate()
 
-# Debugging: Print column names and sample data
-print("CSV Columns:", df.columns)
-print(df.head())
+# Load CSV Data Using Spark
+csv_path = "E:/DataProcessingProject/data/data.csv"
+df = spark.read.option("header", "true").option("inferSchema", "true").csv(csv_path)
 
-# Convert InvoiceDate to proper datetime format
-df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"], format="%m/%d/%Y %H:%M", errors="coerce").astype(str)
+# Convert `InvoiceDate` to Proper Datetime Format
+df = df.withColumn("InvoiceDate", df["InvoiceDate"].cast("string"))
 
-# Send each row as a Kafka message
-for index, row in df.iterrows():
+# Convert DataFrame to JSON and Send to Kafka
+for row in df.collect():
     transaction = {
-        "InvoiceNo": str(row["InvoiceNo"]),
-        "StockCode": str(row["StockCode"]),
-        "Description": str(row["Description"]),
-        "Quantity": int(row["Quantity"]),
+        "InvoiceNo": row["InvoiceNo"],
+        "StockCode": row["StockCode"],
+        "Description": row["Description"],
+        "Quantity": row["Quantity"],
         "InvoiceDate": row["InvoiceDate"],
-        "UnitPrice": float(row["UnitPrice"]),
-        "CustomerID": str(row["CustomerID"]) if not pd.isna(row["CustomerID"]) else None,
-        "Country": str(row["Country"])
+        "UnitPrice": row["UnitPrice"],
+        "CustomerID": row["CustomerID"] if row["CustomerID"] else "Unknown",
+        "Country": row["Country"] if row["Country"] else "Unknown"
     }
     producer.produce(topic, key=str(transaction["InvoiceNo"]), value=json.dumps(transaction))
     print(f"Produced: {transaction}")
