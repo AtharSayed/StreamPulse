@@ -1,55 +1,55 @@
 import streamlit as st
-from kafka import KafkaConsumer
 import pandas as pd
-import json
+import matplotlib.pyplot as plt
+import plotly.express as px
 
-# Streamlit App Title
+# Set CSV file path
+csv_path = r"E:\DataProcessingProject\data\data.csv"
+
+# Load the dataset
+def load_data():
+    try:
+        df = pd.read_csv(csv_path, encoding="ISO-8859-1", header=0)
+        return df
+    except FileNotFoundError:
+        st.error(f"File not found: {csv_path}")
+        return None
+
+# Load data
 st.title("📊 Real-time E-commerce Transaction Dashboard")
+df = load_data()
 
-# Kafka Consumer Setup
-KAFKA_TOPIC = "ecom-transactions"  # ✅ Ensure topic name matches producer & consumer
-KAFKA_BROKER = "localhost:9092"
-
-consumer = KafkaConsumer(
-    KAFKA_TOPIC,
-    bootstrap_servers=KAFKA_BROKER,
-    value_deserializer=lambda x: json.loads(x.decode("utf-8"))
-)
-
-# Function to Fetch Data from Kafka
-@st.cache_data(ttl=60)
-def fetch_kafka_data():
-    transactions = []
-    consumer.poll(timeout_ms=1000)  # ✅ Avoid infinite loop
-    for message in consumer:
-        transactions.append(message.value)
-        if len(transactions) >= 100:  # ✅ Limit to avoid memory overload
-            break
-    return transactions
-
-# Load Data
-data = fetch_kafka_data()
-df = pd.DataFrame(data)
-
-# Debugging: Check Columns
-if df.empty:
-    st.warning("⚠️ No data received from Kafka.")
-    st.stop()  # Stop execution if no data
+if df is not None:
+    # Convert InvoiceDate to datetime
+    df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'], errors='coerce')
+    df.dropna(subset=['InvoiceDate'], inplace=True)
+    
+    # Calculate total revenue
+    df['TotalPrice'] = df['Quantity'] * df['UnitPrice']
+    
+    # Sales over time
+    sales_over_time = df.groupby(df['InvoiceDate'].dt.date)['TotalPrice'].sum().reset_index()
+    st.subheader("📈 Sales Over Time")
+    fig1 = px.line(sales_over_time, x='InvoiceDate', y='TotalPrice', title="Total Revenue Trend")
+    st.plotly_chart(fig1)
+    
+    # Top selling products
+    top_products = df.groupby('Description')['Quantity'].sum().nlargest(10).reset_index()
+    st.subheader("🏆 Top 10 Selling Products")
+    fig2 = px.bar(top_products, x='Quantity', y='Description', orientation='h', title="Best-Selling Products")
+    st.plotly_chart(fig2)
+    
+    # Customers by country
+    country_sales = df.groupby('Country')['TotalPrice'].sum().nlargest(10).reset_index()
+    st.subheader("🌍 Top Countries by Sales")
+    fig3 = px.bar(country_sales, x='TotalPrice', y='Country', orientation='h', title="Sales by Country")
+    st.plotly_chart(fig3)
+    
+    # Scatter plot for Quantity vs. Unit Price
+    st.subheader("🔍 Quantity vs. Unit Price")
+    fig4 = px.scatter(df, x='Quantity', y='UnitPrice', title="Quantity vs. Unit Price", opacity=0.6)
+    st.plotly_chart(fig4)
+    
+    st.success("Dashboard Loaded Successfully! ✅")
 else:
-    st.write("✅ Data received successfully!")
-
-# Check if 'Category' column exists
-if 'Category' not in df.columns:
-    st.warning("⚠️ Missing 'Category' column. Displaying all data.")
-    st.dataframe(df)
-else:
-    # Dropdown for Category Selection
-    selected_category = st.selectbox("Select a Category", df['Category'].unique())
-
-    # Filter Data by Selected Category
-    df_filtered = df[df['Category'] == selected_category]
-    st.dataframe(df_filtered)
-
-# Add a rerun button to refresh data
-if st.button("🔄 Refresh Data"):
-    st.rerun()
+    st.error("Unable to load data. Please check the file path.")
