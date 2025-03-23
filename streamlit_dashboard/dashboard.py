@@ -4,6 +4,7 @@ from pyspark.sql.functions import col, sum, desc, from_json
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, TimestampType
 import plotly.express as px
 import time
+import uuid  # Import uuid to generate unique keys
 
 # Initialize Spark Session with Kafka support
 spark = SparkSession.builder \
@@ -63,18 +64,23 @@ def update_dashboard():
         most_sold_items_pd = most_sold_items.limit(10).toPandas()
         top_customers_pd = top_customers.limit(10).toPandas()
 
+        # Generate unique keys for each chart
+        total_sales_key = f"total_sales_chart_{uuid.uuid4()}"
+        most_sold_items_key = f"most_sold_items_chart_{uuid.uuid4()}"
+        top_customers_key = f"top_customers_chart_{uuid.uuid4()}"
+
         # Visualizations
         st.subheader("Total Sales by Country")
         fig1 = px.bar(total_sales_pd, x="Country", y="TotalSales", title="Total Sales by Country", labels={"TotalSales": "Sales (USD)"})
-        st.plotly_chart(fig1, use_container_width=True)
+        st.plotly_chart(fig1, use_container_width=True, key=total_sales_key)  # Unique key
 
         st.subheader("Most Sold Items")
         fig2 = px.bar(most_sold_items_pd, x="Description", y="TotalQuantity", title="Top 10 Most Sold Items")
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, use_container_width=True, key=most_sold_items_key)  # Unique key
 
         st.subheader("Top 10 Customers")
         fig3 = px.bar(top_customers_pd, x="CustomerID", y="TotalSpent", title="Top 10 Customers by Spending")
-        st.plotly_chart(fig3, use_container_width=True)
+        st.plotly_chart(fig3, use_container_width=True, key=top_customers_key)  # Unique key
 
         st.success("Dashboard Updated with Processed Insights!")
     else:
