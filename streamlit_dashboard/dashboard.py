@@ -4,9 +4,9 @@ from pyspark.sql.functions import col, sum, desc, from_json, count, avg, date_fo
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, TimestampType
 import plotly.express as px
 import time
-import uuid  # Import uuid to generate unique keys
+import uuid  
 
-# Initialize Spark Session with Kafka support
+# Initializing the  Spark Session
 spark = SparkSession.builder \
     .appName("ECommerceAnalytics") \
     .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.0") \
