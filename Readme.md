@@ -16,6 +16,24 @@ This project implements a real-time dashboard for monitoring e-commerce transact
 - **Pyspark** for Data handling and manipulations
 - **Python** (for scripting and processing)
 
+## 🧭 Project Structure
+
+```bash
+atharsayed-streampulse/
+├── Readme.md                   # Project documentation and setup guide
+├── requirements.txt            # Python dependencies for the project
+├── kafka/
+│   └── producer.py             # Kafka producer that streams/simulates real-time e-commerce transactions
+├── spark/
+│   └── consumer.py             # Spark Structured Streaming job that reads Kafka data,
+│                               # cleans/transforms it, and prepares it for dashboard consumption
+└── streamlit_dashboard/
+    └── dashboard.py            # Streamlit-based real-time dashboard with Plotly charts 
+                                # to visualize processed e-commerce transaction insights
+```
+
+---
+
 ## Setup and Installation
 
 ### 1. Install Dependencies
