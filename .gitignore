@@ -1,0 +1,9 @@
+checkpoint/
+.vscode/
+.DS_Store
+node_modules/
+dist/
+.env
+*.log
+logs/
+config/
