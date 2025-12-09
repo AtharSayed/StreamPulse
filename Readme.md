@@ -22,8 +22,8 @@ This project implements a real-time dashboard for monitoring e-commerce transact
 
 <br><br>
 
-<img src="images/Streampulse-2.png" alt="Live Charts & Metrics" width="49%"/>
-<img src="images/Streampulse-3.png" alt="Live Charts & Metrics - II" width="49%"/>
+<img src="images/Streampulse-2.png" alt="Live Charts & Metrics" width="100%"/>
+<img src="images/Streampulse-3.png" alt="Live Charts & Metrics - II" width="100%"/>
 
 <br><br>
 
