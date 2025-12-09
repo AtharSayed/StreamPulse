@@ -16,6 +16,21 @@ This project implements a real-time dashboard for monitoring e-commerce transact
 - **Pyspark** for Data handling and manipulations
 - **Python** (for scripting and processing)
 
+### Real-Time Dashboard in Action
+
+<img src="images/Streampulse-1.png" alt="Dashboard Overview" width="100%"/>
+
+<br><br>
+
+<img src="images/Streampulse-2.png" alt="Live Charts & Metrics" width="49%"/>
+<img src="images/Streampulse-3.png" alt="Live Charts & Metrics - II" width="49%"/>
+
+<br><br>
+
+<em>Live streaming transactions • Dark theme • Fully interactive with Plotly • Updates every few seconds</em>
+
+</div>
+
 ## 🧭 Project Structure
 
 ```bash
