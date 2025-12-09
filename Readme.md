@@ -37,6 +37,8 @@ This project implements a real-time dashboard for monitoring e-commerce transact
 atharsayed-streampulse/
 ├── Readme.md                   # Project documentation and setup guide
 ├── requirements.txt            # Python dependencies for the project
+├── .gitignore                  
+├── data                        # Raw data csv for Real time streaming  
 ├── kafka/
 │   └── producer.py             # Kafka producer that streams/simulates real-time e-commerce transactions
 ├── spark/
